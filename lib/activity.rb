@@ -1,30 +1,29 @@
 class Activity
   attr_reader :name,
-              :participant,
-              :amount_paid,
-              :participants,
-              :total_cost
+              :participants
 
   def initialize(name)
     @name         = name
-    @participant  = participant
-    @amount_paid  = amount_paid
-    @participants = {}
-    @total_cost   = total_cost
+    @participants = Hash.new
   end
 
-  def add_participant({participant: amount_paid})
-    if @participants.nil?
-      @participants = {participant: amount_paid}
-    else @participants.merge participants: amount_paid
+  def add_participant(participant, amount_paid)
+    participants[participant] = amount_paid
+  end
+
+  def total_cost
+    participants.values.sum
+  end
+
+  def split_cost
+    (total_cost.to_f / participants.count).round(2)
+  end
+
+  def each_owes
+    people = participants.keys.map { |key| key }
+    owes   = participants.values.map do |value|
+      value = (split_cost - value).round(2)
     end
-  end
-
-  def find_total_cost
-    @total_cost = participants.map {|cost| cost[participant]}.reduce(0, :+)
-  end
-
-  def split_total_cost
-    @total_cost / (@participants.count)
+    people.zip(owes).to_h
   end
 end
