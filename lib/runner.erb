@@ -1,0 +1,24 @@
+require "./lib/reunion"
+require "erb"
+
+r = Reunion.new("Downtown")
+a1 = Activity.new("Hiking")
+a1.add_participant("Gary", 10)
+a1.add_participant("Larry", 15)
+a2 = Activity.new("Karaoke")
+a2.add_participant("Mary", 15)
+a2.add_participant("Terry", 20)
+a2.add_participant("Kerry", 20)
+r.add_activity(a1)
+r.add_activity(a2)
+
+template = ERB.new <<-EOF
+  The location of the reunion is <%= r.location %>.
+  The type of activities are <%= a1.name %> and <%= a2.name %>.
+  The total cost of the reuion is <%= r.total_cost %>.
+  Find your name on the chart below to dicscover whether you owe money or are owed money.
+  (Positive value indicates you owe money, negative value indicates you are owed money)
+  <%= r.each_owes %>
+  EOF
+
+  puts template.result(binding)
